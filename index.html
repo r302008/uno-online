@@ -918,7 +918,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(<UnoOnline />);
   try {
     var sourceEl = document.getElementById("app-source");
     var code = sourceEl.textContent;
-    var output = Babel.transform(code, { presets: ["react"] }).code;
+    var output = Babel.transform(code, { presets: [["react", { runtime: "classic" }]] }).code;
     (0, eval)(output);
   } catch (err) {
     var el = document.getElementById("root");
