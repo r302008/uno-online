@@ -29,6 +29,27 @@
 </style>
 </head>
 <body>
+<script>
+  window.onerror = function (msg, url, line, col, error) {
+    var el = document.getElementById("root");
+    if (el) {
+      el.innerHTML =
+        '<pre style="color:#ff6b6b;background:#1a1a1a;padding:20px;white-space:pre-wrap;font-size:13px;font-family:monospace;">' +
+        "Error: " + msg + "\nLine: " + line + ":" + col + "\n\n" + (error && error.stack ? error.stack : "") +
+        "</pre>";
+    }
+    return false;
+  };
+  window.addEventListener("unhandledrejection", function (e) {
+    var el = document.getElementById("root");
+    if (el) {
+      el.innerHTML =
+        '<pre style="color:#ff6b6b;background:#1a1a1a;padding:20px;white-space:pre-wrap;font-size:13px;font-family:monospace;">' +
+        "Unhandled promise rejection: " + (e.reason && e.reason.message ? e.reason.message : e.reason) +
+        "</pre>";
+    }
+  });
+</script>
 <div id="root"></div>
 
 <script>
@@ -46,7 +67,7 @@
   window.db = firebase.database();
 </script>
 
-<script type="text/babel" data-presets="react">
+<script type="text/babel-source" id="app-source" data-presets="react">
 const { useState, useEffect, useRef, useCallback } = React;
 const db = window.db;
 
@@ -891,6 +912,21 @@ function UnoOnline() {
 }
 
 ReactDOM.createRoot(document.getElementById("root")).render(<UnoOnline />);
+</script>
+
+<script>
+  try {
+    var sourceEl = document.getElementById("app-source");
+    var code = sourceEl.textContent;
+    var output = Babel.transform(code, { presets: ["react"] }).code;
+    (0, eval)(output);
+  } catch (err) {
+    var el = document.getElementById("root");
+    el.innerHTML =
+      '<pre style="color:#ff6b6b;background:#1a1a1a;padding:20px;white-space:pre-wrap;font-size:13px;font-family:monospace;">' +
+      "Build error: " + (err && err.message ? err.message : String(err)) +
+      "</pre>";
+  }
 </script>
 </body>
 </html>
